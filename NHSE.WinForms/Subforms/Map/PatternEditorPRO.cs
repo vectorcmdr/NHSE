@@ -97,7 +97,12 @@ public partial class PatternEditorPRO : Form
             if (dir == null || !Directory.Exists(dir))
                 return;
             var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNoCancel, MessageStrings.MsgAskUpdateValues);
-            Patterns.Load(fbd.SelectedPath, result == DialogResult.Yes);
+            Patterns.Load(fbd.SelectedPath, Player.Personal, result == DialogResult.Yes);
+            foreach(var p in Patterns)
+            {
+                if (p.UsageCompatibility is not (0xEE01 or 0xEE05)) // known valid values (01=pro, 05=default_unused)
+                    p.UsageCompatibility = 0xEE01; // reset to default pro design
+            }
             LoadPattern(Patterns[Index]);
             RepopulateList(Index);
             return;

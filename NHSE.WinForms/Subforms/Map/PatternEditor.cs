@@ -98,7 +98,22 @@ public partial class PatternEditor : Form
             if (dir == null || !Directory.Exists(dir))
                 return;
             var result = WinFormsUtil.Prompt(MessageBoxButtons.YesNoCancel, MessageStrings.MsgAskUpdateValues);
-            Patterns.Load(fbd.SelectedPath, result == DialogResult.Yes);
+            Patterns.Load(fbd.SelectedPath, Player.Personal, result == DialogResult.Yes);
+            foreach(var p in Patterns)
+            {
+                if (p.UsageCompatibility is not (0xEE00 or 0xEE02)) // known valid values (00=non-transparent, 02=transparent)
+                {
+                    using var image = p.GetImage();
+                    if (ImageUtil.ContainsTransparentPixels(image))
+                    {
+                        p.UsageCompatibility = 0xEE02; // set to transparent
+                    }
+                    else
+                    {
+                        p.UsageCompatibility = 0xEE00; // reset to default value (non-transparent)
+                    }
+                }
+            }
             LoadPattern(Patterns[Index]);
             RepopulateList(Index);
             return;
@@ -138,7 +153,7 @@ public partial class PatternEditor : Form
         if (d.UsageCompatibility is not (0xEE00 or 0xEE02)) // known valid values (00=non-transparent, 02=transparent)
         {
             using var image = d.GetImage();
-            if (ContainsTransparentPixels(image))
+            if (ImageUtil.ContainsTransparentPixels(image))
             {
                 d.UsageCompatibility = 0xEE02; // set to transparent
             }
@@ -159,21 +174,6 @@ public partial class PatternEditor : Form
         foreach (var p in Patterns)
             LB_Items.Items.Add(GetPatternSummary(p));
         LB_Items.SelectedIndex = index;
-    }
-
-    public bool ContainsTransparentPixels(Bitmap image)
-    {
-        for (int y = 0; y < image.Height; ++y)
-        {
-            for (int x = 0; x < image.Width; ++x)
-            {
-                if (image.GetPixel(x, y).A < 255) // check alpha
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private void LoadPattern(DesignPattern designPattern)

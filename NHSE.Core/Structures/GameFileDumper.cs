@@ -181,7 +181,7 @@ public static class GameFileDumper
     /// <param name="patterns">Patterns to load</param>
     /// <param name="path">Path to load from</param>
     /// <param name="changeOrigins">Change origins of Patterns</param>
-    public static void Load(this DesignPattern[] patterns, string path, bool changeOrigins)
+    public static void Load(this DesignPattern[] patterns, string path, Personal player, bool changeOrigins)
     {
         if (patterns.Length == 0)
             return;
@@ -197,7 +197,7 @@ public static class GameFileDumper
             var data = File.ReadAllBytes(f);
             var p = new DesignPattern(data);
             if (changeOrigins)
-                p.ChangeOrigins(patterns[ctr], data);
+                p.ChangeOrigins(player, data);
             patterns[ctr] = p;
             if (++ctr >= patterns.Length)
                 break;
@@ -241,7 +241,7 @@ public static class GameFileDumper
     /// <param name="path">Path to load from</param>
     /// <param name="changeOrigins">Change origins of Patterns</param>
     /// <param name="sortAlpha">Sort the files by file name instead of depending on the Operating System's return order</param>
-    public static void Load(this DesignPatternPRO[] patterns, string path, bool changeOrigins, bool sortAlpha = true)
+    public static void Load(this DesignPatternPRO[] patterns, string path, Personal player, bool changeOrigins, bool sortAlpha = true)
     {
         if (patterns.Length == 0)
             return;
@@ -259,7 +259,7 @@ public static class GameFileDumper
             var data = File.ReadAllBytes(f);
             var p = new DesignPatternPRO(data);
             if (changeOrigins)
-                p.ChangeOrigins(patterns[ctr], data);
+                p.ChangeOrigins(player, data);
             patterns[ctr] = p;
             if (++ctr >= patterns.Length)
                 break;

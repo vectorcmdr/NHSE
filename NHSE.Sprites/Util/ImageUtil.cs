@@ -65,6 +65,21 @@ public static class ImageUtil
         }
     }
 
+    public static bool ContainsTransparentPixels(Bitmap image)
+    {
+        for (int y = 0; y < image.Height; ++y)
+        {
+            for (int x = 0; x < image.Width; ++x)
+            {
+                if (image.GetPixel(x, y).A < 255) // check alpha
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static Bitmap GetBitmap(ReadOnlySpan<int> data, int width, int height, PixelFormat format = PixelFormat.Format32bppArgb)
     {
         var span = MemoryMarshal.Cast<int, byte>(data);
